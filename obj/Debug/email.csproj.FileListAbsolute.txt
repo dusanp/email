@@ -1,0 +1,11 @@
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\bin\Debug\email.exe.config
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\bin\Debug\email.exe
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\bin\Debug\email.pdb
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.csprojResolveAssemblyReference.cache
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.MainForm.resources
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.Properties.Resources.resources
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.csproj.GenerateResource.Cache
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.exe
+c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.pdb
+C:\Users\Adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.ReadForm.resources
+C:\Users\Adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.SendForm.resources
