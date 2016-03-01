@@ -16,47 +16,55 @@ namespace email
         static NetworkStream stream;
         public static Message[] GetMail()
         {
-            Connect("pop3.seznam.cz", 110);
-            //Connect("localhost", 110);
-            Console.WriteLine(Receive().Substring(0, 3));
-            Send("USER tset12@seznam.cz\n");
-            Console.WriteLine(Receive().Substring(0, 3));
-            Send("PASS tset12tset12\n");
-            Console.WriteLine(Receive().Substring(0, 3));
-            Send("STAT\n");
-            //TODO error handling BAD BAD BAD
-            int mLength = Int32.Parse("" + Receive()[4]);
-            Message[] m = new Message[mLength];
-            for (int x = mLength; x > 0; x--)
+            try
             {
-                Send("RETR " + x + "\n");
-                bool loopTester = true; 
-                string receivedMsg="";
-                do
+                bool b;
+                Connect(SettingsForm.pOPHost, SettingsForm.pOPPort);
+                //Connect("localhost", 110);
+                b = POPReceive();
+                Send("USER " + SettingsForm.pOPName + "\n");
+                b = POPReceive();
+                Send("PASS " + SettingsForm.pOPPass + "\n");
+                b = POPReceive();
+                Send("STAT\n");
+                //TODO error handling BAD BAD BAD
+                int mLength = Int32.Parse("" + Receive()[4]);
+                Message[] m = new Message[mLength];
+                for (int x = mLength; x > 0; x--)
                 {
-                    string currentReception = Receive();
-                    receivedMsg = receivedMsg + currentReception;
-                    string[] s = Parser.splitToLines(currentReception);
-                    foreach (string S in s)
+                    Send("RETR " + x + "\n");
+                    b = POPReceive();
+                    bool loopTester = true;
+                    string receivedMsg = "";
+                    do
                     {
-                        if (S == ".")
+                        string currentReception = Receive();
+                        receivedMsg = receivedMsg + currentReception;
+                        string[] s = Parser.splitToLines(currentReception);
+                        foreach (string S in s)
                         {
-                            loopTester = false;
-                        }
-                        else
-                        {
-                            
+                            if (S == ".")
+                            {
+                                loopTester = false;
+                            }
+                            else
+                            {
+
+                            }
                         }
                     }
+                    while (loopTester);
+                    m[x - 1] = Parser.parse(receivedMsg);
                 }
-                while (loopTester);
-                Console.WriteLine(receivedMsg);
-                m[x - 1] = Parser.parse(receivedMsg);
+                Send("QUIT\n");
+                return m;
             }
-            Send("QUIT\n");
-            return m;
-
+            catch
+            {
+                return null;
+            }
         }
+       
         public static void SendMail(Message m)
         {
             Connect("smtp.seznam.cz", 25);
@@ -87,21 +95,45 @@ namespace email
                 MessageBox.Show(String.Format("Couldnt connect to {0} at port {1}.", h,p));
             }
         }
+        static bool POPReceive()
+        {
+            string s = Receive();
+            try
+            {
+                
+                if (s.Substring(0, 3).ToUpper() == "+OK")
+                {
+                    return true;
+                }
+                else if (s.Substring(0, 3).ToUpper()== "-ER")
+                {
+                    MessageBox.Show("server returned following error: " + s);
+                    return false;
+                }
+                else
+                {
+                    MessageBox.Show("Server message unexpected, attempting to continue anyways.\n"+s);
+                    return false;
+                }
+            } 
+            catch (ArgumentOutOfRangeException)
+            {
+                MessageBox.Show("Server message unexpected, attempting to continue anyways.\n" + s);
+                return false;
+            }
+        }
         static string Receive()
         {
-            data = new Byte[48];
-            String responseData = String.Empty;
-            int bytes = 0;
-            bytes = stream.Read(data, 0 , data.Length);
-            //Console.WriteLine(bytes);
-            responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-            /*Console.WriteLine("#DUMP");
-            foreach (byte b in data)
-            {
-                Console.WriteLine(b);
+            try {
+                data = new Byte[48];
+                String responseData = String.Empty;
+                int bytes = 0;
+                bytes = stream.Read(data, 0, data.Length);
+                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                Console.WriteLine(responseData);
+                return responseData;
             }
-            Console.WriteLine("#DUMPEND");*/
-            return responseData;
+            catch { return null; }
         }
         static void Send(string s)
         {

@@ -15,9 +15,11 @@ namespace email
         public ReadForm(Message m)
         {
             InitializeComponent();
-            webBrowser1.DocumentText = m.body;
-            textBox1.Text = m.subject;
 
+            webBrowser1.DocumentText = m.body;
+            webBrowser1.Document.Encoding = "UTF-8";
+            textBox1.Text = m.subject;
+            Console.WriteLine(m.body);
         }
     }
 }

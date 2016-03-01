@@ -9,3 +9,4 @@ c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\emai
 c:\users\adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.pdb
 C:\Users\Adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.ReadForm.resources
 C:\Users\Adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.SendForm.resources
+C:\Users\Adamin\documents\visual studio 2015\Projects\email\email\obj\Debug\email.SettingsForm.resources

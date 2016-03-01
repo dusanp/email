@@ -24,7 +24,7 @@ namespace email
             listBox1.Items.Clear();
             Message[] incomingMail = NetComms.GetMail();
             Console.WriteLine("mail retrieved");
-            if (incomingMail.Length != 0)
+            if (incomingMail != null&&incomingMail.Length != 0)
             {
                 foreach (Message m in incomingMail)
                 {
