@@ -83,7 +83,15 @@ namespace email
                 Console.WriteLine(Receive()[0]);
                 Send("DATA\n");
                 Console.WriteLine(Receive()[0]);//354
-                Send(String.Format("From: {0}\nTo: {1}\nDate: {2}\nSubject: {3}\n\n{4}\n.\n", m.sender, m.recipient, m.timestamp, m.subject, m.body));
+                Send(String.Format(@"
+From: {0}
+To: {1}
+Date: {2}
+Subject: {3}
+
+{ 4}
+.
+", m.sender, m.recipient, m.timestamp, m.subject, m.body));
                 Console.WriteLine(Receive()[0]);
                 Send("QUIT\n");
                 Console.WriteLine(Receive()[0]);
