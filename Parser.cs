@@ -11,7 +11,7 @@ namespace email
     {
         private delegate void Del(string s, Message m);
         private delegate string Del2(string s, Message m);
-        private static bool mimeHandled;
+        private static bool mimeHandled, multiHandled;
         public static Message Parse(string s)
         {
             Del subjectHandler = assignSubject;
@@ -30,6 +30,7 @@ namespace email
             d.Add("charset=", encodingHandler);
 
             mimeHandled = false;
+            multiHandled = false;
             Message m = new Message("", s, "", "", "");
             
             foreach (string headerCheck in splitToLines(returnHeader(s)))
@@ -43,7 +44,8 @@ namespace email
                     }
                 }
             }
-            if (!mimeHandled) { ParsePlainText(m.body, m); } else { m.body = removeHeader(m.body); }
+            if (!mimeHandled) { ParsePlainText(m.body, m); }
+            if (multiHandled) { m.body = removeHeader(m.body); }
                 Console.WriteLine("returning m");
             return m;
         }
@@ -141,6 +143,7 @@ namespace email
         }
         static void parseMultiMix(string s, Message m)
         {
+            multiHandled = true;
             string[] postParse = null;
             string boundary=null;
             foreach (string headerCheck in splitToLines(returnHeader(s)))
