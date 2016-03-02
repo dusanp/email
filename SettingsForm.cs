@@ -32,7 +32,7 @@ namespace email
 
             }
 
-            private set { if (value != 0) { SMTPPort = value; } else { SMTPPort = 25; } }
+            set { if (value != 0) { SMTPPort = value; } else { SMTPPort = 25; } }
         }
         public static int pOPPort
         {
@@ -48,7 +48,7 @@ namespace email
                     return 110;
                 }
             }
-            private set { if (value != 0) { POPPort = value; } else { POPPort = 110; } }
+            set { if (value != 0) { POPPort = value; } else { POPPort = 110; } }
         }
         public static string sMTPHost
         {
@@ -64,7 +64,7 @@ namespace email
                     throw new Exception();
                 }
             }
-            private set { SMTPHost = value; }
+            set { SMTPHost = value; }
         }
         public static string pOPHost
         {
@@ -80,7 +80,7 @@ namespace email
                     throw new Exception();
                 }
             }
-            private set { POPHost = value; }
+            set { POPHost = value; }
         }
         public static string sMTPName
         {
@@ -96,7 +96,7 @@ namespace email
                     throw new Exception();
                 }
             }
-            private set { SMTPName = value; }
+            set { SMTPName = value; }
         }
         public static string pOPName
         {
@@ -112,7 +112,7 @@ namespace email
                     throw new Exception();
                 }
             }
-            private set { POPName = value; }
+            set { POPName = value; }
         }
         public static string sMTPPass
         {
@@ -128,7 +128,7 @@ namespace email
                     return "";
                 }
             }
-            private set { SMTPPass = value; }
+            set { SMTPPass = value; }
         }
         public static string pOPPass
         {
@@ -144,7 +144,7 @@ namespace email
                     return "";
                 }
             }
-            private set { POPPass = value; }
+            set { POPPass = value; }
         }
         #endregion
 
@@ -172,7 +172,7 @@ namespace email
                 MessageBox.Show("Wrong Port Format");
             }
 
-            //savetofile
+            IOComms.writeSettings();
         }
         private void RetrieveSettings()
         {
@@ -209,7 +209,6 @@ namespace email
         public SettingsForm()
         {
             InitializeComponent();
-
             RetrieveSettings();
 
         }

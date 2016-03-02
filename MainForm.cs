@@ -23,14 +23,13 @@ namespace email
             d.Clear();
             listBox1.Items.Clear();
             Message[] incomingMail = NetComms.GetMail();
-            Console.WriteLine("mail retrieved");
+            //Console.WriteLine("mail retrieved");
             if (incomingMail != null&&incomingMail.Length != 0)
             {
                 foreach (Message m in incomingMail)
                 {
                     d.Add(listBox1.Items.Count, m);
-                    //listBox1.Items.Add(m.subject);
-                    listBox1.Items.Add(m.body);
+                    listBox1.Items.Add(m.sender +": " + m.subject);
                 }
             }
 
@@ -47,6 +46,7 @@ namespace email
             }
         }
 
+
         private void settingsButton_Click(object sender, EventArgs e)
         {
             SettingsForm settingsForm = new SettingsForm();
@@ -57,6 +57,11 @@ namespace email
         {
             SendForm sendForm = new SendForm();
             sendForm.Show();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            IOComms.readSettings();
         }
     }
 }

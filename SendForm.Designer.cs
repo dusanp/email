@@ -33,6 +33,8 @@
             this.rcptBox = new System.Windows.Forms.TextBox();
             this.subjectBox = new System.Windows.Forms.TextBox();
             this.bodyBox = new System.Windows.Forms.TextBox();
+            this.rcptLabel = new System.Windows.Forms.Label();
+            this.subjectLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // sendButton
@@ -61,9 +63,9 @@
             // 
             this.rcptBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.rcptBox.Location = new System.Drawing.Point(12, 12);
+            this.rcptBox.Location = new System.Drawing.Point(73, 12);
             this.rcptBox.Name = "rcptBox";
-            this.rcptBox.Size = new System.Drawing.Size(744, 20);
+            this.rcptBox.Size = new System.Drawing.Size(683, 20);
             this.rcptBox.TabIndex = 1;
             this.rcptBox.WordWrap = false;
             // 
@@ -71,9 +73,9 @@
             // 
             this.subjectBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.subjectBox.Location = new System.Drawing.Point(12, 38);
+            this.subjectBox.Location = new System.Drawing.Point(73, 38);
             this.subjectBox.Name = "subjectBox";
-            this.subjectBox.Size = new System.Drawing.Size(744, 20);
+            this.subjectBox.Size = new System.Drawing.Size(683, 20);
             this.subjectBox.TabIndex = 1;
             this.subjectBox.WordWrap = false;
             // 
@@ -90,11 +92,31 @@
             this.bodyBox.Size = new System.Drawing.Size(744, 503);
             this.bodyBox.TabIndex = 1;
             // 
+            // rcptLabel
+            // 
+            this.rcptLabel.AutoSize = true;
+            this.rcptLabel.Location = new System.Drawing.Point(12, 12);
+            this.rcptLabel.Name = "rcptLabel";
+            this.rcptLabel.Size = new System.Drawing.Size(55, 13);
+            this.rcptLabel.TabIndex = 2;
+            this.rcptLabel.Text = "Recipient:";
+            // 
+            // subjectLabel
+            // 
+            this.subjectLabel.AutoSize = true;
+            this.subjectLabel.Location = new System.Drawing.Point(12, 38);
+            this.subjectLabel.Name = "subjectLabel";
+            this.subjectLabel.Size = new System.Drawing.Size(43, 13);
+            this.subjectLabel.TabIndex = 2;
+            this.subjectLabel.Text = "Subject";
+            // 
             // SendForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(768, 608);
+            this.Controls.Add(this.subjectLabel);
+            this.Controls.Add(this.rcptLabel);
             this.Controls.Add(this.bodyBox);
             this.Controls.Add(this.subjectBox);
             this.Controls.Add(this.rcptBox);
@@ -114,5 +136,7 @@
         private System.Windows.Forms.TextBox rcptBox;
         private System.Windows.Forms.TextBox subjectBox;
         private System.Windows.Forms.TextBox bodyBox;
+        private System.Windows.Forms.Label rcptLabel;
+        private System.Windows.Forms.Label subjectLabel;
     }
 }

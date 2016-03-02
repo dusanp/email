@@ -27,13 +27,12 @@ namespace email
                 Send("PASS " + SettingsForm.pOPPass + "\n");
                 b = POPReceive();
                 Send("STAT\n");
-                //TODO error handling BAD BAD BAD
                 int mLength = Int32.Parse("" + Receive()[4]);
                 Message[] m = new Message[mLength];
                 for (int x = mLength; x > 0; x--)
                 {
                     Send("RETR " + x + "\n");
-                    b = POPReceive();
+                    b = POPReceive(); //known possible bug?
                     bool loopTester = true;
                     string receivedMsg = "";
                     do
@@ -54,7 +53,7 @@ namespace email
                         }
                     }
                     while (loopTester);
-                    m[x - 1] = Parser.parse(receivedMsg);
+                    m[x - 1] = Parser.Parse(receivedMsg);
                 }
                 Send("QUIT\n");
                 return m;
@@ -67,21 +66,29 @@ namespace email
        
         public static void SendMail(Message m)
         {
-            Connect("smtp.seznam.cz", 25);
-            Console.WriteLine(Receive()[0]);
-            Send("HELO seznam.cz");
-            Console.WriteLine(Receive()[0]);
-            Send("MAIL FROM:tset12@seznam.cz");
-            Console.WriteLine(Receive()[0]);
-            Send("RCPT TO:tset@seznam.cz");
-            Console.WriteLine(Receive()[0]);
-            Send("DATA");
-            Console.WriteLine(Receive()[0]);//354
-            Send(String.Format("From: {0}\nTo: {1}\nDate: {2}\nSubject: {3}\n\n{4}\n.",m.sender,m.recipient,m.timestamp,m.subject,m.body));
-            Console.WriteLine(Receive()[0]);
-            Send("QUIT");
-            Console.WriteLine(Receive()[0]);
-
+            try {
+                Connect(SettingsForm.sMTPHost, SettingsForm.sMTPPort);
+                Console.WriteLine(Receive()[0]);
+                Send("HELO "+SettingsForm.sMTPHost+"\n");
+                Console.WriteLine(Receive()[0]);
+                Send("AUTH LOGIN\n");
+                Console.WriteLine(Receive()[0]);
+                Send(Convert.ToBase64String(Encoding.UTF8.GetBytes(SettingsForm.sMTPName)) + "\n");
+                Console.WriteLine(Receive()[0]);
+                Send(Convert.ToBase64String(Encoding.UTF8.GetBytes(SettingsForm.sMTPPass)) + "\n");
+                Console.WriteLine(Receive()[0]);
+                Send("MAIL FROM: <"+SettingsForm.sMTPName+">\n");
+                Console.WriteLine(Receive()[0]);
+                Send("RCPT TO: <"+m.recipient+">\n");
+                Console.WriteLine(Receive()[0]);
+                Send("DATA\n");
+                Console.WriteLine(Receive()[0]);//354
+                Send(String.Format("From: {0}\nTo: {1}\nDate: {2}\nSubject: {3}\n\n{4}\n.\n", m.sender, m.recipient, m.timestamp, m.subject, m.body));
+                Console.WriteLine(Receive()[0]);
+                Send("QUIT\n");
+                Console.WriteLine(Receive()[0]);
+            }
+            catch { }
         }
         static void Connect(string h,int p)
         {
@@ -125,12 +132,12 @@ namespace email
         static string Receive()
         {
             try {
-                data = new Byte[48];
+                data = new Byte[1024];
                 String responseData = String.Empty;
                 int bytes = 0;
                 bytes = stream.Read(data, 0, data.Length);
                 responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine(responseData);
+                //foreach (byte b in data){ Console.WriteLine(b); }
                 return responseData;
             }
             catch { return null; }

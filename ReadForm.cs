@@ -12,14 +12,32 @@ namespace email
 {
     public partial class ReadForm : Form
     {
+        bool allowNav=false;
         public ReadForm(Message m)
         {
+            
             InitializeComponent();
-
+            allowNav = true;
             webBrowser1.DocumentText = m.body;
+            allowNav = false;
             webBrowser1.Document.Encoding = "UTF-8";
-            textBox1.Text = m.subject;
-            Console.WriteLine(m.body);
+            infoBox.Text = m.sender+": "+m.subject;
+            //Console.WriteLine(m.body);
+        }
+
+        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            if (!allowNav)
+            {
+                //TODO:sec vulnerability
+                System.Diagnostics.Process.Start(SanitiseUri(e.Url.AbsoluteUri));
+                e.Cancel = true;
+            }
+        }
+        private static string SanitiseUri(string s)
+        {
+            //todo
+            return s;
         }
     }
 }

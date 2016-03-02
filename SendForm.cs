@@ -20,6 +20,7 @@ namespace email
         private void SendButton_Click(object sender, EventArgs e)
         {
             NetComms.SendMail(new Message(subjectBox.Text, bodyBox.Text, rcptBox.Text, SettingsForm.sMTPName, DateTime.Now.ToString("F")));
+            this.Close();
         }
 
         private void discardButton_Click(object sender, EventArgs e)

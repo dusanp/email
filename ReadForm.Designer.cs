@@ -29,32 +29,36 @@
         private void InitializeComponent()
         {
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.infoBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // webBrowser1
             // 
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
+            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webBrowser1.Location = new System.Drawing.Point(0, 20);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(897, 658);
+            this.webBrowser1.Size = new System.Drawing.Size(897, 638);
             this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
             // 
-            // textBox1
+            // infoBox
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox1.Location = new System.Drawing.Point(0, 0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(897, 20);
-            this.textBox1.TabIndex = 1;
+            this.infoBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.infoBox.Enabled = false;
+            this.infoBox.Location = new System.Drawing.Point(0, 0);
+            this.infoBox.Name = "infoBox";
+            this.infoBox.Size = new System.Drawing.Size(897, 20);
+            this.infoBox.TabIndex = 1;
             // 
             // ReadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(897, 658);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.infoBox);
             this.Controls.Add(this.webBrowser1);
             this.Name = "ReadForm";
             this.Text = "ReadForm";
@@ -66,6 +70,6 @@
         #endregion
 
         private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox infoBox;
     }
 }

@@ -17,15 +17,38 @@ namespace email
         {
             return m;
         }
-        public static Message parse(string s)
+        public delegate void Del(string s, Message m);
+        public static Message Parse(string s)
         {
-            //temp
-            return new Message("", DecodeQuotedPrintable(s), "", "", "");
+            Del subjectHandler = assignSubject;
+            Del senderHandler = assignSender;
+            Del recipientHandler = assignRecipent;
+            Del dateHandler = assignDate;
+            Del contentTypeHandler = assignContentType;
+
+            Dictionary<string, Delegate> d = new Dictionary<string, Delegate>();
+            d.Add("Date:", dateHandler);
+            //d.Add("Content-Transfer-Encoding:", cteHandler);
+            d.Add("Subject:", subjectHandler);
+            d.Add("From:", senderHandler);
+            d.Add("To:", recipientHandler);
+            d.Add("Content-Type:", contentTypeHandler);
+            string[] preParse = s.Split(new[] { "\r\n\r\n", "\r\r", "\n\n" }, StringSplitOptions.None);
+            Message m = new Message("", DecodeQuotedPrintable(s), "", "", "");
+            foreach (string headerCheck in splitToLines(preParse[0]))
+            {
+                Console.WriteLine(headerCheck);
+                foreach (KeyValuePair<string, Delegate> k in d)
+                {
+                    if (headerCheck.StartsWith(k.Key))
+                    {
+                        k.Value.DynamicInvoke(headerCheck.Substring(k.Key.Length), m);
+                    }
+                }
+            }
+            return m;
         }
-        public static string[] splitToLines(string s)
-        {
-            return s.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-        }
+
         public static string DecodeQuotedPrintable(string input/*, encoding*/)
         {
             var occurences = new Regex(@"(=[0-9A-Z][0-9A-Z])+", RegexOptions.Multiline);
@@ -41,10 +64,52 @@ namespace email
                 }
                 input = input.Replace(m.Value, Encoding.UTF8.GetString(bytes));
             }
+            input = input.Replace("=\r\n", "\r\n");
             input = input.Replace("=\n", "\n");
             input = input.Replace("=\r", "\r");
-            input = input.Replace("=\r\n", "\r\n");
+  
             return input;
-        }  
+        }
+        public static string ParsePlainText(string s)
+        {
+            s = s.Replace("\r\n", "<br>");
+            s = s.Replace("\r", "<br>");
+            s = s.Replace("\n", "<br>");
+            return s;
+        }
+
+
+        private static void assignSubject(string s, Message m)
+        {
+            m.subject = s;
+        }
+        private static void assignSender(string s, Message m)
+        {
+            m.sender = s;
+        }
+        private static void assignRecipent(string s, Message m)
+        {
+            m.recipient = s;
+        }
+        private static void assignMime(string s, Message m)
+        {
+            //todo
+        }
+        private static void assignDate(string s, Message m)
+        {
+            m.timestamp = s;
+        }
+        private static void assignCte(string s, Message m)
+        {
+            m.timestamp = s;
+        }
+        private static void assignContentType(string s, Message m)
+        {
+            m.timestamp = s;
+        }
+        public static string[] splitToLines(string s)
+        {
+            return s.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        }
     }
 }
