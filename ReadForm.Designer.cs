@@ -63,8 +63,7 @@ namespace email
             this.Controls.Add(this.infoBox);
             this.Controls.Add(this.webBrowser1);
             this.Name = "ReadForm";
-            this.Text = "ReadForm";
-
+            this.Text = "Read Email";
             this.ResumeLayout(false);
             this.PerformLayout();
 

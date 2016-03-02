@@ -123,7 +123,7 @@
             this.Controls.Add(this.discardButton);
             this.Controls.Add(this.sendButton);
             this.Name = "SendForm";
-            this.Text = "SendForm";
+            this.Text = "Compose Email";
             this.ResumeLayout(false);
             this.PerformLayout();
 

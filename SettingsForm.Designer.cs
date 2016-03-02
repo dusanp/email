@@ -288,7 +288,7 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.tabControl1);
             this.Name = "SettingsForm";
-            this.Text = "SettingsForm";
+            this.Text = "Settings";
             this.tabControl1.ResumeLayout(false);
             this.SMTPPage.ResumeLayout(false);
             this.SMTPPage.PerformLayout();
