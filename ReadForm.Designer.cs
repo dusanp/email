@@ -1,4 +1,6 @@
-﻿namespace email
+﻿using System;
+
+namespace email
 {
     partial class ReadForm
     {
@@ -62,6 +64,7 @@
             this.Controls.Add(this.webBrowser1);
             this.Name = "ReadForm";
             this.Text = "ReadForm";
+
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -71,5 +74,6 @@
 
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.TextBox infoBox;
+
     }
 }

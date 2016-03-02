@@ -13,6 +13,7 @@ namespace email
     public partial class ReadForm : Form
     {
         bool allowNav=false;
+        Message asdf;
         public ReadForm(Message m)
         {
             
@@ -23,6 +24,7 @@ namespace email
             webBrowser1.Document.Encoding = "UTF-8";
             infoBox.Text = m.sender+": "+m.subject;
             //Console.WriteLine(m.body);
+            asdf = m;
         }
 
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
@@ -39,5 +41,6 @@ namespace email
             //todo
             return s;
         }
+        
     }
 }

@@ -132,7 +132,7 @@ namespace email
         static string Receive()
         {
             try {
-                data = new Byte[1024];
+                data = new Byte[2048];
                 String responseData = String.Empty;
                 int bytes = 0;
                 bytes = stream.Read(data, 0, data.Length);

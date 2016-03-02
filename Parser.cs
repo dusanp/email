@@ -17,6 +17,10 @@ namespace email
         {
             return m;
         }
+        public static void setMessageBody(string before, string after, Message m)
+        {
+            m.body = m.body.Replace(before, after);
+        }
         private delegate void Del(string s, Message m);
         private delegate string Del2(string s, Message m);
         private static bool mimeHandled;
@@ -39,7 +43,8 @@ namespace email
 
             mimeHandled = false;
             string[] preParse = s.Split(new[] { "\r\n\r\n", "\r\r", "\n\n" }, StringSplitOptions.None);
-            Message m = new Message("", "x"+s, "", "", "");
+            Console.WriteLine(preParse[0]);
+            Message m = new Message("", s, "", "", "");
             
             foreach (string headerCheck in splitToLines(preParse[0]))
             {
@@ -53,11 +58,11 @@ namespace email
                 }
             }
             if (!mimeHandled) { ParsePlainText(m.body, m); }
-
+                Console.WriteLine("returning m");
             return m;
         }
 
-        public static void DecodeQuotedPrintable(string input, Message message)
+        public static string DecodeQuotedPrintable(string input, Message message)
         {
             Console.WriteLine("decoding QP");
             string originalS = input;
@@ -77,26 +82,86 @@ namespace email
             input = input.Replace("=\r\n", "\r\n");
             input = input.Replace("=\n", "\n");
             input = input.Replace("=\r", "\r");
+            Console.WriteLine(message.body.Contains(originalS));
+            //message.body = message.body.Replace(originalS, input);
+            return input;
 
-            message.body.Replace(originalS, input);
+            
+
         }
-        public static void decodeBase64(string input, Message message)
+        public static string decodeBase64(string input, Message message)
         {
             Console.WriteLine("decoding B64");
             string originalS = input;
             input = message.encoding.GetString(Convert.FromBase64String(input));
-            message.body.Replace(originalS, input);
+            return input;
+            //message.body = message.body.Replace(originalS, input);
         }
-        public static string ParsePlainText(string s, Message m)
+        public static void ParsePlainText(string s, Message m)
         {
-            Console.WriteLine("parsing plaintext");
+            System.Windows.Forms.MessageBox.Show(m.body.Contains(s) + "");
             string originalS = s;
+            s = decodeTransferEncoding(s, m);
+
+        Console.WriteLine("parsing plaintext");
+            
             s = removeHeader(s);
+
+            s = s.Replace(Environment.NewLine, "<br>");
             s = s.Replace("\r\n", "<br>");
             s = s.Replace("\r", "<br>");
             s = s.Replace("\n", "<br>");
-            m.body.Replace(originalS, s);
-            return null;
+            m.body = m.body.Replace(originalS, s);
+
+
+
+
+        }
+        public static void ParseHtmlText(string s, Message m)
+        {
+            System.Windows.Forms.MessageBox.Show(m.body.Contains(s) + "");
+            string originalS = s;
+            s = decodeTransferEncoding(s, m);
+
+            Console.WriteLine("parsing HTML");
+            s = removeHeader(s);
+            m.body = m.body.Replace(originalS, s);
+
+
+
+
+        }
+        static string decodeTransferEncoding(string s, Message m)
+        {
+            Dictionary<string, Delegate> d = new Dictionary<string, Delegate>();
+            Del2 quotedPrintableHandler = DecodeQuotedPrintable;
+            Del2 base64Handler = decodeBase64;
+            d.Add("base64", base64Handler);
+            d.Add("quoted-printable", quotedPrintableHandler);
+
+            string[] preParse = s.Split(new[] { "\r\n\r\n", "\r\r", "\n\n" }, StringSplitOptions.None);
+            string[] keywords = new string[] { "Content-Type: ", "\tcharset=", "Content-Transfer-Encoding: " };
+
+            foreach (string headerCheck in splitToLines(preParse[0]))
+            {
+                foreach (string keyword in keywords)
+                {
+                    if (headerCheck.StartsWith(keyword))
+                    {
+                        Console.WriteLine(keyword + " noted in " + headerCheck);
+                        foreach (KeyValuePair<string, Delegate> k in d)
+                        {
+                            if (headerCheck.Substring(keyword.Length) == k.Key)
+                            {
+
+                                return (string)k.Value.DynamicInvoke(s, m);
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            return s;
         }
         static void parseMultiMix(string s, Message m)
         {
@@ -108,14 +173,16 @@ namespace email
                 {
                     Console.WriteLine("boundary found "+ "--" + headerCheck.Substring("boundary=".Length+2, headerCheck.Length - "boundary=\"".Length - 2));
                     postParse = s.Split(new[]{ "--" + headerCheck.Substring("boundary=".Length+2, headerCheck.Length - "boundary=\"".Length - 2)},StringSplitOptions.None) ;
+                    Console.WriteLine();
                 }
             }
             try
             {
                 for (int x = 1; x < postParse.Length; x++)
                 {
-                    //Console.WriteLine(postParse[x]);//
+                    //Console.WriteLine(postParse[x]);
                     assignMime("", m, postParse[x]);
+                    Console.WriteLine("is postparse in message? " + m.body.Contains(postParse[x]));
                 }
             }
             catch { }
@@ -144,7 +211,8 @@ namespace email
         }
         private static string removeHeader(string s)
         {
-            string[] preParse = s.Split(new[] { "\r\n\r\n", "\r\r", "\n\n" }, StringSplitOptions.None);
+            string[] preParse = s.Split(new[] { "\r\n\r\n", "\r\r", "\n\n", Environment.NewLine+Environment.NewLine }, StringSplitOptions.None);
+
             string returnString ="";
             for (int x=1; x<preParse.Length; x++)
             {
@@ -173,21 +241,19 @@ namespace email
             mimeHandled = true;
             Dictionary<string, Delegate> d = new Dictionary<string, Delegate>();
 
-            Del2 plainTextHandler = ParsePlainText;
-            Del quotedPrintableHandler = DecodeQuotedPrintable;
-            Del base64Handler = decodeBase64;
+            Del plainTextHandler = ParsePlainText;
+            Del htmlHandler = ParseHtmlText;
             //Del multiAltHandler = parseMultiAlt;
             Del multiAltHandler = parseMultiMix;
             Del multiMixHandler = parseMultiMix;
 
-            d.Add("text/plain;", plainTextHandler);
-            d.Add("quoted-printable", quotedPrintableHandler);
-            d.Add("base64", base64Handler);
             d.Add("multipart/alternative;", multiAltHandler);
             d.Add("multipart/mixed;", multiMixHandler);
+            d.Add("text/plain;", plainTextHandler);
+            d.Add("text/html;", htmlHandler);
 
             string[] preParse = optionalMimeSubPart.Split(new[] { "\r\n\r\n", "\r\r", "\n\n" }, StringSplitOptions.None);
-            string[] keywords = new string[] { "Content-Type: ", "\tcharset=", "Content-Transfer-Encoding: " };
+            string[] keywords = new string[] { "Content-Type: ", "\tcharset=" };
             foreach (string headerCheck in splitToLines(preParse[0]))
             {
                 foreach (string keyword in keywords)
@@ -199,14 +265,17 @@ namespace email
                         {
                             if (headerCheck.Substring(keyword.Length) == k.Key)
                             {
-                                k.Value.DynamicInvoke(optionalMimeSubPart, m);
+                                k.Value.DynamicInvoke(optionalMimeSubPart,m);
                             }
                         }
                     }
                     //else { Console.WriteLine(keyword + " not noted in "+headerCheck); }
                 }
             }
+
         }
+        
+        
 
         private static void assignMime(string s, Message m)
         {
